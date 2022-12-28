@@ -1,5 +1,6 @@
 # CPTicTacToe
 A simple implementation of Tic Tac Toe for the Casio Classpad II based on hollyhock-2 SDK.
+hollyhock-2 can be found here: https://github.com/SnailMath/hollyhock-2
 
 <h1>Controls</h1>
 Just click a field by using your touchpad.
