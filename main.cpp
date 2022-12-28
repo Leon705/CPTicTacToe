@@ -117,17 +117,17 @@ void drawSquare(int x, int y, int x2, int y2){
 }
 
 
-void drawBoard(){
+void drawBoard(int8_t player){
 	Field f;
 	for(int i = 0; i < 3; i++){
 		for(int j = 0; j < 3; j++){
 			f = board[i][j];
-			char* letter;
 			if(f.letter == 1){
-				drawLetter(LETTER_X, f.x+(50-(3*PIXELLENGTH)/2), f.y+(50-(3*PIXELLENGTH)/2));
+				drawLetter(LETTER_X, f.x+(50-(3*PIXELLENGTH)/2)-1, f.y+(50-(3*PIXELLENGTH)/2)-1);
 			}else if(f.letter == 2){
-				drawLetter(LETTER_O, f.x+(50-(3*PIXELLENGTH)/2), f.y+(50-(3*PIXELLENGTH)/2));		
+				drawLetter(LETTER_O, f.x+(50-(3*PIXELLENGTH)/2)-1, f.y+(50-(3*PIXELLENGTH)/2)-1);		
 			}
+			Debug_Printf(0,40,false,0,"Player %d's turn", player);
 			LCD_Refresh();
 		}
 	}
@@ -199,6 +199,7 @@ bool setField(int8_t player, Field field){
 	return true;
 }
 
+
 void gameLoop(){
 	struct InputEvent event;
 	
@@ -206,6 +207,7 @@ void gameLoop(){
 	int32_t x = 0;
 	int32_t y = 0;
 	int8_t player = 1;
+	int8_t lastBeginner = 1;
 	int8_t won = 0; /*0->no win; 1 -> player 1; 2 -> player 2*/
 	char playerNumberStr[8];
 
@@ -221,6 +223,8 @@ void gameLoop(){
 					LCD_ClearScreen();
 					init();
 					counter--;
+					if(lastBeginner == 1) player = 2; else player = 1;
+					lastBeginner = player;
 					break;
 				}	
 
@@ -246,7 +250,7 @@ void gameLoop(){
 
 		Debug_Printf(0, 42, false, 0, "Tic Tac Toe by Leon705");
 
-		drawBoard();
+		drawBoard(player);
 		/*check win*/
 		won = checkWin();
 		if(won!=0){
@@ -256,11 +260,13 @@ void gameLoop(){
 			Debug_PrintString((char*)"Player ", false);
 			Debug_SetCursorPosition(8, 2);
 			Debug_PrintString(playerNumberStr, false);
-			Debug_SetCursorPosition(12, 2);
+			Debug_SetCursorPosition(9, 2);
 			Debug_PrintString((char*)" won", false);
 			LCD_Refresh();
 			Debug_WaitKey();
 			LCD_ClearScreen();
+			if(won == 1) player = 2; else player = 1;
+			lastBeginner = player;
 			init();
 		
 		}else{
@@ -275,7 +281,7 @@ void main() {
 	LCD_VRAMBackup();
 	LCD_ClearScreen();
 	init();
-	drawBoard();
+	drawBoard(1);
 	LCD_Refresh();
 	gameLoop();
 	LCD_VRAMRestore();
